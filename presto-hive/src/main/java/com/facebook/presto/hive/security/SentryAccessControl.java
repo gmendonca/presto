@@ -287,77 +287,65 @@ public class SentryAccessControl
 
     private boolean getGrantOptionForPrivilege(Identity identity, HivePrivilegeInfo.HivePrivilege privilege, SchemaTableName tableName)
     {
-        if (identity.getPrincipal().isPresent()) {
-            String group = identity.getPrincipal().get().getName();
+        String group = identity.getUser();
 
-            String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
+        String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
 
-            List<String> rolesId = checkRole(groupId);
+        List<String> rolesId = checkRole(groupId);
 
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have any roles");
-            }
-
-            List<String> privilegesId = checkPrivilege(rolesId);
-
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have enough privileges");
-            }
-
-            return checkPermissions(privilegesId, tableName.getSchemaName(), tableName.getTableName(), privilege);
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have any roles");
         }
 
-        return false;
+        List<String> privilegesId = checkPrivilege(rolesId);
+
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have enough privileges");
+        }
+
+        return checkPermissions(privilegesId, tableName.getSchemaName(), tableName.getTableName(), privilege);
     }
 
     private boolean checkTablePermission(Identity identity, SchemaTableName tableName, HivePrivilegeInfo.HivePrivilege... requiredPrivileges)
     {
-        if (identity.getPrincipal().isPresent()) {
-            String group = identity.getPrincipal().get().getName();
+        String group = identity.getUser();
 
-            String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
+        String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
 
-            List<String> rolesId = checkRole(groupId);
+        List<String> rolesId = checkRole(groupId);
 
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have any roles");
-            }
-
-            List<String> privilegesId = checkPrivilege(rolesId);
-
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have enough privileges");
-            }
-
-            return checkPermissions(privilegesId, tableName.getSchemaName(), tableName.getTableName(), requiredPrivileges);
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have any roles");
         }
 
-        return false;
+        List<String> privilegesId = checkPrivilege(rolesId);
+
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have enough privileges");
+        }
+
+        return checkPermissions(privilegesId, tableName.getSchemaName(), tableName.getTableName(), requiredPrivileges);
     }
 
     private boolean checkDatabasePermission(Identity identity, String schemaName, HivePrivilegeInfo.HivePrivilege... requiredPrivileges)
     {
-        if (identity.getPrincipal().isPresent()) {
-            String group = identity.getPrincipal().get().getName();
+        String group = identity.getUser();
 
-            String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
+        String groupId = requireNonNull(checkGroup(group), "User doesn't belong to any group");
 
-            List<String> rolesId = checkRole(groupId);
+        List<String> rolesId = checkRole(groupId);
 
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have any roles");
-            }
-
-            List<String> privilegesId = checkPrivilege(rolesId);
-
-            if (rolesId.isEmpty()) {
-                throw new NullPointerException("User doesn't have enough privileges");
-            }
-
-            return checkPermissions(privilegesId, schemaName, null, requiredPrivileges);
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have any roles");
         }
 
-        return false;
+        List<String> privilegesId = checkPrivilege(rolesId);
+
+        if (rolesId.isEmpty()) {
+            throw new NullPointerException("User doesn't have enough privileges");
+        }
+
+        return checkPermissions(privilegesId, schemaName, null, requiredPrivileges);
     }
 
     private String checkGroup(String group)
